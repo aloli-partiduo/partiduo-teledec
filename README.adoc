@@ -284,7 +284,7 @@ par l'adaptateur réel (CA3 sur l'enveloppe, CA12, 2571, 2572, DAS2, cases
 de la 2035, 2035-A et 2035-B jointes à la liasse, puis chaque dépôt préparé
 par l'extension et envoyé au TELEDEC simulé avec la validation active)
 contre les schémas officiels, lus dans `TELEDEC_SCHEMAS_DIR` (défaut :
-`../.teledec-doc/schemas`, à côté du dépôt) ; absents, comme en CI, ces
+`../partiduo-docs/travail/teledec/schemas`, à côté du dépôt) ; absents, comme en CI, ces
 exemples passent en attente. La validation à l'envoi elle-même est
 vérifiée en toutes circonstances sur des schémas de fantaisie.
 
@@ -320,7 +320,7 @@ Réglages du fichier, sans le préfixe `PARTIDUO_` :
   `TELEDEC_USER_FORMAT`, `TELEDEC_SOURCE` — passés à l'adaptateur de la
   suite, jamais recopiés dans l'environnement du processus (un
   `PARTIDUO_TELEDEC_…` de l'environnement prime) ;
-* schémas : `TELEDEC_SCHEMAS_DIR` (défaut `../.teledec-doc/schemas`) ;
+* schémas : `TELEDEC_SCHEMAS_DIR` (défaut `../partiduo-docs/travail/teledec/schemas`) ;
   présents, l'adaptateur de la suite valide chaque document avant de
   l'envoyer au stage ;
 * rappels : `TELEDEC_CALLBACK_URL` (adresse publique https qui mène au port

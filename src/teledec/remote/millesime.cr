@@ -6,7 +6,7 @@ module Teledec
     # confirmée par TELEDEC le 1er octobre 2026, D-TDC9-003). Le millésime
     # est l'année de *campagne* : la DAS2 des sommes versées en 2025 et la
     # liasse de l'exercice clos le 31 décembre 2025 relèvent de la campagne
-    # 2026. Sources (`.teledec-doc/`) : réponses de TELEDEC du 1er octobre
+    # 2026. Sources (`partiduo-docs/travail/teledec/`) : réponses de TELEDEC du 1er octobre
     # 2026 ; pages « Formulaires fiscaux - Millésime 2024 à 2026 » et leurs
     # paliers, guide de l'API Liasse (exercice 2024 → `#MILLESIME 2025`),
     # page des schémas JSON (`{millesime}` = « année de campagne »),

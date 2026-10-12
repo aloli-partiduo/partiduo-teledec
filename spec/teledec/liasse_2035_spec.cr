@@ -8,7 +8,7 @@ private alias Payload = Teledec::Payload
 
 # Codes des zones numériques des formulaires 2035, 2035A et 2035B de
 # TELEDEC, millésime 2026 (feuilles « Champs » et « Template » relevées dans
-# `partiduo/.teledec-doc/FORMULAIRES-TELEDEC.adoc`, B-TDC-004) : la table de
+# `partiduo-docs/travail/teledec/FORMULAIRES-TELEDEC.adoc`, B-TDC-004) : la table de
 # correspondance livrée par le module `liberal` ne doit reporter qu'à ces
 # cases (DECISIONS D-VAL-006).
 private TELEDEC_2035_CODES = {

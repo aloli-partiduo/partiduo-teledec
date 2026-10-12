@@ -13,10 +13,10 @@ private alias Payload = Teledec::Payload
 
 # Schémas JSON officiels de TELEDEC : documents de TELEDEC, jamais
 # versionnés dans ce dépôt. `TELEDEC_SCHEMAS_DIR`, sinon
-# `../.teledec-doc/schemas` à côté du dépôt ; absents (CI), les exemples
+# `../partiduo-docs/travail/teledec/schemas` à côté du dépôt ; absents (CI), les exemples
 # qui les lisent passent en attente (DECISIONS D-TDC6-002).
 module Teledec::SchemaSpec
-  DIR = ENV["TELEDEC_SCHEMAS_DIR"]?.presence || File.expand_path("../../../.teledec-doc/schemas", __DIR__)
+  DIR = ENV["TELEDEC_SCHEMAS_DIR"]?.presence || File.expand_path("../../../partiduo-docs/travail/teledec/schemas", __DIR__)
 
   def self.store! : Remote::Schemas
     store = Remote::Schemas.new(DIR)

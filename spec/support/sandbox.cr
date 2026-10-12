@@ -12,7 +12,7 @@ require "http/server"
 # (`nouvelle-declaration` : adresse de redirection rendue, dépôt jamais
 # finalisé ; en attente si le jeton ne porte pas encore ce droit), rappels
 # de TELEDEC reçus par la réception réelle de l'extension. Si les schémas JSON de TELEDEC sont
-# présents (`TELEDEC_SCHEMAS_DIR`, sinon `../.teledec-doc/schemas`),
+# présents (`TELEDEC_SCHEMAS_DIR`, sinon `../partiduo-docs/travail/teledec/schemas`),
 # l'adaptateur valide chaque document avant de l'envoyer (D-TDC6-003).
 # Activée
 # seulement si `~/.config/partiduo/teledec-sandbox.env` porte
@@ -151,10 +151,10 @@ module Teledec::SandboxSpec
   end
 
   # Schémas JSON de TELEDEC pour valider chaque document avant l'envoi :
-  # `TELEDEC_SCHEMAS_DIR`, sinon `../.teledec-doc/schemas` à côté du
+  # `TELEDEC_SCHEMAS_DIR`, sinon `../partiduo-docs/travail/teledec/schemas` à côté du
   # dépôt ; `nil` s'ils sont absents.
   def self.schemas_dir : String?
-    dir = setting("TELEDEC_SCHEMAS_DIR") || File.expand_path("../../../.teledec-doc/schemas", __DIR__)
+    dir = setting("TELEDEC_SCHEMAS_DIR") || File.expand_path("../../../partiduo-docs/travail/teledec/schemas", __DIR__)
     dir if File.exists?(File.join(dir, "index.json"))
   end
 
