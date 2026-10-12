@@ -20,7 +20,7 @@
 Partiduo::Modules.register do
   code "TELEDEC"
   name "teledec.module.name"
-  version "0.1.0"
+  version Teledec::VERSION
   requires_core "~> 0.1"
   depends_on_any "ACCOUNTING", "LIBERAL"
 
