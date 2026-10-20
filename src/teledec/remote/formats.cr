@@ -119,7 +119,8 @@ module Teledec
       IGNORED = {"3517SCA12" => %w[A1 A2 A4 A5 B2 B5 17]}
 
       # Zones connues des formulaires de la liasse que Partiduo remplit
-      # (2035 préparée par `liberal`), par formulaire puis par premier
+      # (2035 préparée par `liberal`, annexes 2054 et 2055 fournies par une
+      # extension), par formulaire puis par premier
       # millésime d'application (rang, `Millesime.rank`), relevées dans les
       # schémas JSON de TELEDEC (2035, 2035A, 2035B de 2024 à 2026,
       # D-TDC6-004) : la 2035-B gagne AC en 2025, AD, AE, AF, AG, DP, DQ,
@@ -132,6 +133,29 @@ module Teledec
         EN FC GF GJ GL AW
       ]
       ZONE_2035B = %w[CA CB CC CD CE CF CG CH CK CL CM CN CP CR CS CT CX CY CZ DG DJ DK DL GK HC HE JA AB]
+      # Annexes 2054 (immobilisations) et 2055 (amortissements) de la
+      # liasse du régime réel normal, fournies par une extension
+      # (`Teledec::Api.register_annexes`, A-AMO-2) : zones numériques de la
+      # feuille « Champs » des fichiers du millésime 2023
+      # (`partiduo-docs/travail/teledec/base/pieces-jointes/formulaires-fiscaux-millesime-2023/`,
+      # `2054.xlsx`, `2055.xlsx`), dernière version publiée par TELEDEC,
+      # sans schéma JSON plus récent : la table vaut, au rang 202301, pour
+      # tous les millésimes suivants tant qu'aucune version plus récente
+      # n'est publiée (`zone_codes`). Les cases booléennes « Déposé néant »
+      # (`RN`, `UL`) n'en sont pas : seules des zones chiffrées se joignent.
+      ZONE_2054 = %w[
+        KD KE KF KG KH KI KJ KK KL KM KN KO KP KQ KR KS KT KU KV KW KX KY KZ LA LB LC LD LE LF LG LH LI LJ LK LL LM LN LO
+        LP LQ LR LS LV LW LX LY LZ MA MB MC MD ME MF MG MH MI MJ MK ML MM MN MO MP MQ MR MS MT MU MV MW MX MY MZ NA NB
+        NC ND NE NF NG NH NI NJ NK PA PB PC PD PE PF PG PH PJ PK PL PM PN PP PQ QB QD QE QF QG QH QJ QK QL QM QN QP QQ
+        QR QS QT QU QV QW QX QY QZ RA RB RC RD RE RF RG RH RJ RK RL RM RP RQ RR RS RT RU RV RW RX RY RZ
+      ]
+      ZONE_2055 = %w[
+        BA BB BC BD BE BF BG BH BJ BK BL BM BN BP BQ BR BS CA CB CC CD CE CF CG CH CJ CK CL CM CN DA DB DC DD DE DF DG
+        DH DJ DK DL DM DN EA EB EC ED EE EF EG EH EJ EK EL EM EN ES FA FB FC FD FE FF FG FH FJ FK FL FM FN GA GB GC GD
+        GE GF GG GH GJ GK GL GM GN HA HB HC HD HE HF HG HH HJ HK HL HM HN HS PE PF PG PH PI PJ PK PL PM PN PO PQ PR PS
+        PT PU PV PW PX PY PZ QA QB QC QD QE QF QG QH QI QJ QK QL QM QN QO QP QR QS QT QU QV QW QX SP SR TA TB TC TD UJ
+        UK UM UN UP UQ UR US UT UU AA AB AC AD AE AF AG AH AJ AK AL AM AN AP AQ AR AS AT AU AV AW AX
+      ]
       ZONE_CODES = {
         "2035-A" => {202401 => ZONE_2035A},
         "2035-B" => {
@@ -140,6 +164,8 @@ module Teledec
           202601 => ZONE_2035B + %w[AC AD AE AF AG DP DQ DR DS],
         },
         "2035" => {202401 => %w[AA AB FG FH FJ FV MG NG NH NN NP NQ NR AP AL AM AJ AN AF AR AG AH AS]},
+        "2054" => {202301 => ZONE_2054},
+        "2055" => {202301 => ZONE_2055},
       }
 
       # Formulaires dont les zones portent le suffixe du formulaire dans le
@@ -335,8 +361,9 @@ module Teledec
         {"zones_formulaires" => zones, "informations_supplementaires" => {} of String => String}.to_pretty_json
       end
 
-      # Cases jointes à la liasse (2035 préparée par le module `liberal`) :
-      # zones par formulaire (`2035A`), clé = code de la case seul
+      # Cases jointes à la liasse (2035 préparée par le module `liberal`,
+      # annexes fournies par une extension, `Annexes`) : zones par
+      # formulaire (`2035A`, `2054`), clé = code de la case seul
       # (`"2035A": {"AA": …}`), sauf pour la 2065, la 2031 et la 2035
       # (`HA_2065`, `FJ_2035`) ;
       # montants en euros entiers ; elles priment sur la ventilation de la

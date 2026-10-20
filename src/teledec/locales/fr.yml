@@ -158,6 +158,9 @@ fr:
       more: " (et %{count} autres écarts)"
     controls:
       zone_unknown: "Case %{zone} inconnue des formulaires de TELEDEC : elle serait ignorée ; corrigez la table de correspondance de la 2035."
+      annex_failed: "Les annexes fournies par %{source} sont indisponibles (erreur de l'extension) : la liasse les omettrait."
+      annex_form: "%{source} fournit le formulaire %{form}, qu'il n'a pas déclaré ou que le régime de la liasse n'a pas."
+      annex_zone_unknown: "Case %{zone} fournie par %{source} inconnue des formulaires de TELEDEC : elle serait ignorée ; corrigez la table de correspondance de l'extension."
       siren: "Le SIREN de la société manque (paramètres de la société)."
       address: "L'adresse de la société est incomplète."
       balance_empty: "La balance de l'exercice est vide."

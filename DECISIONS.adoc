@@ -1,0 +1,97 @@
+= partiduo-teledec — décisions
+:toc: left
+:toc-title: Table des matières
+:icons: font
+
+Décisions prises pour l'extension `TELEDEC`, quand un point n'était pas
+tranché par les ADR (contexte, choix, alternative écartée). Les ADR ne sont
+jamais modifiés.
+
+*Décisions antérieures.* Du portage jusqu'au 1er octobre 2026, les
+décisions de l'extension sont dans le `DECISIONS.adoc` de `partiduo-app`
+(D-TDC-001 à D-TDC-026, puis séries D-TDC2-* à D-TDC12-*, sections
+« TELEDEC ») : elles restent valables et ne sont pas recopiées ici. Ce
+fichier les continue à partir de la série D-TDC13 ; `partiduo-app` n'en
+reçoit plus.
+
+Spécification : ADR-007 D4 et D5 (télédéclarations, formule API Balance),
+ADR-003 (contrat d'extension ; amendements adoptés le 13 octobre 2026,
+dont A-AMO-2 de `partiduo-amortis`). Correspondance des zones de TELEDEC :
+`partiduo-docs/travail/teledec/` (`FORMULAIRES-TELEDEC.adoc`, schémas
+JSON, pièces jointes de la base de connaissances).
+
+== Décisions
+
+=== D-TDC13-001 — Annexes de la liasse fournies par une extension (A-AMO-2, 20 octobre 2026)
+
+*Contexte.* La formule API Balance laisse TELEDEC remplir la liasse depuis
+la balance ; il ne connaît pas les mouvements des immobilisations et des
+amortissements (annexes 2054 et 2055 du réel normal), que tient
+`partiduo-amortis`. L'amendement A-AMO-2 (ADR-003, adopté le 13 octobre
+2026) demande un point d'accroche où une extension déclare les cases d'un
+formulaire pour un exercice, joint par `partiduo-teledec` comme la 2035 du
+module `liberal`.
+
+*Choix.*
+
+* Accroche dans le contrat de l'extension, pas dans le cœur :
+  `Teledec::Api.register_annexes(code, forms) { |actor, fiscal_year_id| … }`
+  (service interne `Teledec::Annexes`). Le bloc rend
+  `Hash(String, Hash(String, BigDecimal))?` : formulaire → zone de TELEDEC
+  → montant, `nil` s'il n'a rien pour l'exercice. *Sens de la
+  dépendance* : l'extension fournisseuse dépend de `partiduo-teledec` et
+  s'y enregistre (fichier à part, requis par la distribution) ;
+  `teledec` ne cite aucune extension, comme `liberal` avec
+  `register_asset_source` (D-AMD-023 du cœur).
+* Seul un fournisseur *actif* (pièce du registre, `Sources.active?`) est
+  appelé, avec l'acteur système, et seulement pour une liasse dont le
+  régime a ses formulaires : `Config::ANNEX_FORMS` (`is_rn`, `bic_rn` :
+  2054 et 2055). Les autres sortes (greffe, IS, TVA, DAS2) et les régimes
+  simplifiés, BNC et SCI n'appellent personne.
+* *Collision.* Un formulaire n'a qu'un fournisseur : un second est refusé
+  à l'enregistrement (`ArgumentError`), comme un code déjà déclaré ou un
+  formulaire hors des annexes ouvertes. L'erreur est de composition (deux
+  extensions d'une distribution prétendent remplir la même annexe) : elle
+  se voit au démarrage, avant tout dépôt, plutôt qu'en une règle de
+  priorité silencieuse.
+* *Contrôles bloquants* à la préparation : fournisseur qui lève une
+  exception (`teledec.controls.annex_failed`, journalisée), formulaire
+  rendu sans être déclaré ou hors du régime (`annex_form`), zone inconnue
+  du millésime de la liasse (`annex_zone_unknown`, même règle que la 2035 :
+  TELEDEC ignore sans erreur une clé inconnue, D-TDC3-002). À l'envoi,
+  `Formats.liasse_zones` refuse de même toute zone inconnue.
+* Montants arrondis à l'euro (`Money.euros_text`), joints aux cases du
+  document (`Payload#boxes`) et au bloc `zones_formulaires`, clé = code de
+  la zone seul (`"2054": {"LB": …}`), comme les schémas JSON des
+  formulaires de la liasse normale (2050 à 2059). `details["annexes"]`
+  nomme les fournisseurs retenus (`AMORTIS:2054+2055`),
+  `details["annexes_fingerprint"]` est l'empreinte SHA-256 des cases
+  jointes ; le document change donc avec elles (`teledec.controls.changed`).
+* *Zones par millésime.* `Remote::Formats::ZONE_2054` et `ZONE_2055` :
+  zones chiffrées de la feuille « Champs » de `2054.xlsx` et `2055.xlsx`
+  du millésime 2023 (base de connaissances de TELEDEC), dernière version
+  publiée ; aucun schéma JSON plus récent. Rangées au rang 202301 de
+  `ZONE_CODES`, elles valent pour les millésimes suivants tant qu'aucune
+  version plus récente n'est publiée (`zone_codes` prend la table la plus
+  récente applicable). Les cases booléennes « Déposé néant » (`RN`, `UL`)
+  n'y sont pas.
+
+*Alternative écartée.* Une accroche dans le cœur
+(`Partiduo::Api::TaxAnnexes`, proposition d'origine) : le cœur ne connaît
+pas la liasse ni ses millésimes, seul `teledec` la transmet ; l'accroche
+y aurait été une table de cases sans lecteur. Faire dépendre `teledec`
+du shard `partiduo-amortis` : il dépendrait d'une extension facultative.
+
+*À soumettre.* Les tableaux du régime simplifié (2033-C : immobilisations,
+amortissements, plus et moins-values) ne sont pas ouverts : leurs zones
+sont relevées (`FORMULAIRES-TELEDEC.adoc`, compléments du millésime 2023),
+mais la demande ne portait que sur la 2054 et la 2055, et la 2033-C mêle
+les immobilisations aux plus et moins-values en lignes répétées : à
+décider par l'utilisateur. Les ouvrir se ferait en ajoutant
+`2033-C` à `Config::ANNEX_FORMS` (`is_rsi`, `bic_rsi`) et ses zones à
+`ZONE_CODES`.
+
+*Compatibilité.* Aucune donnée : sans fournisseur enregistré, la liasse
+est inchangée. Une liasse du réel normal déjà préparée signale
+`teledec.controls.changed` à son prochain contrôle si un fournisseur actif
+y joint désormais des annexes.

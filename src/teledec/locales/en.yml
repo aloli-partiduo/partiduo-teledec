@@ -156,6 +156,9 @@ en:
       more: " (and %{count} other discrepancies)"
     controls:
       zone_unknown: "Box %{zone} unknown to the TELEDEC forms: it would be ignored; fix the 2035 mapping table."
+      annex_failed: "The annexes supplied by %{source} are unavailable (extension error): the return would leave them out."
+      annex_form: "%{source} supplies form %{form}, which it did not declare or which the return's regime does not have."
+      annex_zone_unknown: "Box %{zone} supplied by %{source} unknown to the TELEDEC forms: it would be ignored; fix the extension's mapping table."
       siren: "No company SIREN (company settings)."
       address: "The company address is incomplete."
       balance_empty: "The trial balance of the financial year is empty."

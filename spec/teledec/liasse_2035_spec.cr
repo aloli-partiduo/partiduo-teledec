@@ -55,7 +55,8 @@ describe "2035 transmise à TELEDEC (module liberal, B-TDC-004)" do
     TELEDEC_2035_CODES.each do |form, codes|
       Formats.zone_codes(form, 202601).sort.should eq((codes - (form == "2035-B" ? %w[DM] : [] of String)).sort)
     end
-    union = Formats::ZONE_CODES.transform_values(&.values.flatten.uniq!.sort!)
+    # Les annexes 2054 et 2055 (A-AMO-2) ont leur propre exemple.
+    union = Formats::ZONE_CODES.select(TELEDEC_2035_CODES.keys).transform_values(&.values.flatten.uniq!.sort!)
     union.should eq(TELEDEC_2035_CODES.transform_values(&.sort))
   end
 end

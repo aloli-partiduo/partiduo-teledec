@@ -30,6 +30,23 @@ module Teledec
     }
     TAX_SYSTEMS = FORMS.keys
 
+    # Annexes de la liasse qu'une extension peut fournir (A-AMO-2,
+    # `Annexes`), par régime : la 2054 (immobilisations) et la 2055
+    # (amortissements) du régime réel normal (2050 et suivantes). Les
+    # tableaux du régime simplifié (2033-C) ne sont pas ouverts : point à
+    # soumettre (D-TDC13-001).
+    ANNEX_FORMS = {
+      "is_rn"  => %w[2054 2055],
+      "bic_rn" => %w[2054 2055],
+    }
+
+    # Annexes fournies pour le régime `tax_system` (aucune hors du réel
+    # normal) ; sans régime : toutes celles qu'une extension peut fournir.
+    def self.annex_forms(tax_system : String? = nil) : Array(String)
+      return ANNEX_FORMS.values.flatten.uniq! if tax_system.nil?
+      ANNEX_FORMS[tax_system]? || [] of String
+    end
+
     # Régimes d'imposition soumis à l'impôt sur les sociétés (relevés 2571
     # et 2572).
     CORPORATE_TAX_SYSTEMS = %w[is_rsi is_rn]

@@ -5,8 +5,9 @@ module Teledec
   # repères du dépôt (clé, période, échéance). Ne calcule jamais les cases
   # de la liasse (formule API Balance, ADR-007 D4) ; reprend les cases des
   # déclarations préparées ailleurs (TVA du lot 4, 2035 du module
-  # `liberal`). Toutes les lectures passent par `Partiduo::Api` avec
-  # l'acteur système, après le contrôle des droits par `Teledec::Api`.
+  # `liberal`, annexes 2054 et 2055 d'une extension : `Annexes`). Toutes
+  # les lectures passent par `Partiduo::Api` avec l'acteur système, après
+  # le contrôle des droits par `Teledec::Api`.
   # Sans la Comptabilité, seule la liasse 2035 est construite, à partir de
   # la 2035 de `liberal` ; toute autre sorte est refusée avant la moindre
   # lecture de la Comptabilité (`Sources`, DECISIONS D-TDC2-002).
@@ -135,7 +136,7 @@ module Teledec
 
     # Liasse et greffe : balance de l'exercice avant clôture, balance de
     # l'exercice précédent, 2035 préparée pour un BNC tenant le module
-    # `liberal`.
+    # `liberal`, annexes fournies par une extension (`Annexes`).
     private def self.balance_content(input, tax_system, fiscal_year, controls) : Content
       computed = Balance.compute(fiscal_year)
       balance = computed.rows.map(&.to_payload)
@@ -148,6 +149,14 @@ module Teledec
       boxes = nil
       if input.kind == "liasse" && tax_system == "bnc" && Sources.liberal?
         boxes = liberal_boxes(fiscal_year.ends_on.as(Time), controls, details)
+      end
+      # Annexes fournies par une extension (2054, 2055 du réel normal,
+      # A-AMO-2) : jointes aux cases, jamais en double d'une 2035.
+      if input.kind == "liasse"
+        target = Remote::Millesime.target("liasse", day(fiscal_year.ends_on.as(Time)))
+        Annexes.collect(tax_system, fiscal_year.id, target, controls, details).try do |annexes|
+          boxes = (boxes || {} of String => Hash(String, String)).merge(annexes)
+        end
       end
       {balance, previous, boxes, details}
     end

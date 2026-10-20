@@ -90,6 +90,8 @@ en:
       threshold: "Threshold per beneficiary"
       confidential: "Confidential accounts"
       tax_return_fingerprint: "Fingerprint of the prepared 2035"
+      annexes: "Annexes supplied by an extension"
+      annexes_fingerprint: "Fingerprint of the attached annexes"
       source: "Source"
       source_liberal: "2035 from the Liberal profession module (no trial balance)"
       closing_neutralised: "Closing entry left out of the trial balance"

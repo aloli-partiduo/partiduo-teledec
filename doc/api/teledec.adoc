@@ -8,8 +8,8 @@
 Contrat public de l'extension (`src/teledec/api/teledec.cr`, types dans
 `types.cr`), sur le modèle de `Partiduo::Api` : acteur en premier argument,
 contrôle d'accès en première ligne, vues immuables ; `ModuleDisabled` si
-l'extension est inactive. Décisions : `../partiduo-app/DECISIONS.adoc`,
-D-TDC-001 à D-TDC-028.
+l'extension est inactive. Décisions : `../partiduo-app/DECISIONS.adoc`
+(D-TDC-001 à D-TDC12-*), puis `DECISIONS.adoc` de ce dépôt (D-TDC13-*).
 
 == Permissions
 
@@ -62,7 +62,7 @@ D-TDC-001 à D-TDC-028.
 |===
 |`kind` |Saisie (`PrepareInput`) |Document
 
-|`liasse` |`fiscal_year_id` |balance avant clôture, balance N-1, identité ; 2035 : cases et empreinte de `Liberal.tax_return`
+|`liasse` |`fiscal_year_id` |balance avant clôture, balance N-1, identité ; 2035 : cases et empreinte de `Liberal.tax_return` ; réel normal : annexes 2054 et 2055 d'un fournisseur actif (<<annexes>>)
 |`greffe` |`fiscal_year_id`, `confidential` |balance, identité
 |`is_2571` |`fiscal_year_id`, `number` (1 à 4), `amount` |montant de l'acompte (euros)
 |`is_2572` |`fiscal_year_id`, `amount` (défaut : solde du 695) |impôt, acomptes transmis, solde
@@ -164,6 +164,44 @@ non plus. Avertissement `teledec.controls.greffe_liasse` tant que la liasse
 de l'exercice n'est pas transmise (TELEDEC la reprend).
 
 `FilingView#ready?`, `FilingSummaryView#ready?` : aucun contrôle bloquant (`ControlView#error?`).
+
+[[annexes]]
+=== Annexes fournies par une extension (A-AMO-2, D-TDC13-001)
+
+Une extension qui tient les données d'une annexe de la liasse
+(immobilisations et amortissements de `partiduo-amortis`) s'enregistre
+auprès de `teledec` ; ses cases sont jointes à la liasse (bloc
+`zones_formulaires` de l'API Balance) comme celles de la 2035 :
+
+[source]
+----
+Teledec::Api.register_annexes("AMORTIS", %w[2054 2055]) do |actor, fiscal_year_id|
+  # actor : acteur système ; nil si rien pour cet exercice
+  {"2054" => {"LB" => BigDecimal.new("1200")}, "2055" => {"QM" => BigDecimal.new("600")}}
+end
+----
+
+* `ANNEX_FORMS` : formulaires ouverts, `2054` et `2055`, joints à la
+  liasse du réel normal (`is_rn`, `bic_rn`) seulement ; la 2033-C du
+  simplifié n'est pas ouverte.
+* Le bloc n'est appelé que si la pièce `code` est active ; il rend
+  `AnnexBoxes` (`Hash(String, Hash(String, BigDecimal))`) : formulaire →
+  zone de TELEDEC → montant (arrondi à l'euro par `teledec`).
+* `ArgumentError` à l'enregistrement : code invalide ou déjà déclaré,
+  formulaire hors de `ANNEX_FORMS`, formulaire déjà fourni par une autre
+  pièce (un fournisseur par formulaire).
+* Contrôles bloquants de la liasse : `teledec.controls.annex_failed`
+  (le bloc a levé une exception, `%{source}`), `.annex_form` (formulaire
+  non déclaré ou hors du régime, `%{source}`, `%{form}`),
+  `.annex_zone_unknown` (zone hors de la table du millésime, `%{zone}`,
+  `%{source}`).
+* Document : cases dans `boxes`, `details["annexes"]`
+  (`AMORTIS:2054+2055`), `details["annexes_fingerprint"]` (SHA-256 des
+  cases jointes).
+* Zones : `Remote::Formats::ZONE_2054`, `ZONE_2055`, relevées au
+  millésime 2023 (dernière version publiée par TELEDEC), valables ensuite
+  tant qu'aucune version plus récente n'est publiée.
+* `unregister_annexes(code)` (specs), `annex_providers`.
 
 == Transport
 

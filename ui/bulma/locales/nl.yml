@@ -90,6 +90,8 @@ nl:
       threshold: "Drempel per begunstigde"
       confidential: "Vertrouwelijke jaarrekening"
       tax_return_fingerprint: "Vingerafdruk van de voorbereide 2035"
+      annexes: "Bijlagen geleverd door een extensie"
+      annexes_fingerprint: "Vingerafdruk van de bijgevoegde bijlagen"
       source: "Bron"
       source_liberal: "2035 van de module Vrij beroep (zonder proef- en saldibalans)"
       closing_neutralised: "Afsluitingsboeking buiten de balans gelaten"

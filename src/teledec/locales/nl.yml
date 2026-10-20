@@ -156,6 +156,9 @@ nl:
       more: " (en %{count} andere afwijkingen)"
     controls:
       zone_unknown: "Vak %{zone} onbekend in de formulieren van TELEDEC: het zou genegeerd worden; verbeter de correspondentietabel van de 2035."
+      annex_failed: "De bijlagen geleverd door %{source} zijn niet beschikbaar (fout van de extensie): de aangifte zou ze weglaten."
+      annex_form: "%{source} levert formulier %{form}, dat het niet heeft aangegeven of dat het stelsel van de aangifte niet heeft."
+      annex_zone_unknown: "Vak %{zone} geleverd door %{source} onbekend in de formulieren van TELEDEC: het zou genegeerd worden; verbeter de correspondentietabel van de extensie."
       siren: "Het SIREN-nummer van de vennootschap ontbreekt (instellingen van de vennootschap)."
       address: "Het adres van de vennootschap is onvolledig."
       balance_empty: "De proef- en saldibalans van het boekjaar is leeg."

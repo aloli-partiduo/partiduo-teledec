@@ -90,6 +90,8 @@ fr:
       threshold: "Seuil par bénéficiaire"
       confidential: "Comptes confidentiels"
       tax_return_fingerprint: "Empreinte de la 2035 préparée"
+      annexes: "Annexes fournies par une extension"
+      annexes_fingerprint: "Empreinte des annexes jointes"
       source: "Source"
       source_liberal: "2035 du module Profession libérale (sans balance)"
       closing_neutralised: "Écriture de clôture écartée de la balance"

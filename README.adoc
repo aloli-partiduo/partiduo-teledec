@@ -19,8 +19,8 @@ leur liasse sur un portail.
 La spécification est dans `../partiduo-docs/` : ADR-007 (D4, D5 ; D6 pour la
 2035 du module `liberal`), ADR-003 (contrat d'extension), ADR-005 D4
 (interface d'une extension), ADR-006 D3. Les décisions propres à ce dépôt
-sont consignées dans `../partiduo-app/DECISIONS.adoc` (préfixe `D-TDC-`),
-les blocages dans `../partiduo-app/BLOCAGES.adoc` (`B-TDC-`). Référence du
+sont consignées dans `../partiduo-app/DECISIONS.adoc` (préfixe `D-TDC-`,
+jusqu'à la série D-TDC12), puis dans link:DECISIONS.adoc[] (D-TDC13-*), les blocages dans `../partiduo-app/BLOCAGES.adoc` (`B-TDC-`). Référence du
 contrat : link:doc/api/teledec.adoc[].
 
 == Fonctions
@@ -34,7 +34,9 @@ contrat : link:doc/api/teledec.adoc[].
 et 2033 ou 2050 (BIC à l'IR), 2035 (BNC), 2072 (SCI). Balance de l'exercice
 avant l'écriture de clôture, balance de l'exercice précédent, identité.
 Aucune case calculée ; pour un BNC tenant le module `liberal`, les cases de
-la 2035 préparée par `Partiduo::Api::Liberal` et son empreinte. Sans la
+la 2035 préparée par `Partiduo::Api::Liberal` et son empreinte ; au réel
+normal, les annexes 2054 et 2055 d'une extension qui les fournit
+(`Teledec::Api.register_annexes`, par exemple `partiduo-amortis`). Sans la
 Comptabilité (module `liberal` seul) : la 2035 seule, sans balance (voir
 <<liberal-seul>>).
 

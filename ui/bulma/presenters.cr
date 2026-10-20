@@ -174,7 +174,8 @@ module Teledec
                 when "confidential"
                   value = I18n.t(value == "1" ? "teledec_ui.answer_yes" : "teledec_ui.answer_no")
                   I18n.t("teledec_ui.details.confidential")
-                when "tax_return_fingerprint" then I18n.t("teledec_ui.details.tax_return_fingerprint")
+                when "tax_return_fingerprint", "annexes", "annexes_fingerprint"
+                  I18n.t("teledec_ui.details.#{key}")
                 when "source"
                   value = I18n.t("teledec_ui.details.source_#{value}")
                   I18n.t("teledec_ui.details.source")
