@@ -14,7 +14,9 @@ module Teledec
   #
   # * Seul un fournisseur *actif* (pièce du registre) est consulté, avec
   #   l'acteur système, et seulement pour les formulaires du régime de la
-  #   liasse (`Config.annex_forms` : réel normal) ;
+  #   liasse (`Config.annex_forms` : 2054 et 2055 du réel normal, 2033-C
+  #   du simplifié) ; un formulaire déclaré d'un autre régime est écarté
+  #   sans erreur, le fournisseur ne connaissant pas le régime ;
   # * un formulaire n'a qu'un fournisseur : un second est refusé à
   #   l'enregistrement (`ArgumentError`, erreur de composition de la
   #   distribution, vue au démarrage) ;
@@ -76,10 +78,14 @@ module Teledec
         joined = call(provider, fiscal_year_id, controls) || next
         part = {} of String => Hash(String, String)
         joined.each do |form, values|
-          unless forms.includes?(form)
+          unless provider.forms.includes?(form)
             controls << Builder.error("teledec.controls.annex_form", {"source" => provider.code, "form" => form})
             next
           end
+          # Formulaire déclaré mais d'un autre régime (2054 pour une
+          # liasse simplifiée) : le fournisseur ne connaît pas le régime de
+          # la liasse, il rend tout ce qu'il sait remplir (D-TDC13-002).
+          next unless forms.includes?(form)
           next if values.empty?
           part[form] = values.transform_values { |amount| Money.euros_text(amount) }
         end

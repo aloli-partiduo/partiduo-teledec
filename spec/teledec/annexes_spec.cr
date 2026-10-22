@@ -82,7 +82,7 @@ describe "Annexes de la liasse fournies par une extension (A-AMO-2, D-TDC13-001)
     provide_fixed(SAMPLE)
     expect_raises(ArgumentError, /déjà déclaré/) { Api.register_annexes(CODE, %w[2054]) { |_, _| nil } }
     expect_raises(ArgumentError, /déjà fourni par TDCANNEX/) { Api.register_annexes("AUTRE", %w[2055]) { |_, _| nil } }
-    expect_raises(ArgumentError, /hors des annexes/) { Api.register_annexes("AUTRE", %w[2033-C]) { |_, _| nil } }
+    expect_raises(ArgumentError, /hors des annexes/) { Api.register_annexes("AUTRE", %w[2050]) { |_, _| nil } }
     expect_raises(ArgumentError, /code de pièce invalide/) { Api.register_annexes("autre", %w[2054]) { |_, _| nil } }
     Api.annex_providers.map(&.code).should eq([CODE])
   end
@@ -129,7 +129,7 @@ describe "Annexes de la liasse fournies par une extension (A-AMO-2, D-TDC13-001)
     sections.document["informations_supplementaires"].as_h.should be_empty
   end
 
-  it "ignore un fournisseur inactif, et tout fournisseur hors du réel normal" do
+  it "ignore un fournisseur inactif, et un fournisseur sans formulaire du régime de la liasse" do
     S.books("is_rn")
     sale
     called = 0
@@ -148,6 +148,48 @@ describe "Annexes de la liasse fournies par une extension (A-AMO-2, D-TDC13-001)
     called.should eq(0)
     simplified.forms.should eq(%w[2065 2033])
     simplified.boxes.should be_empty
+  end
+
+  it "relève les zones de la 2033-C et la nomme 2033C jusqu'en 2024, 2033C2 depuis 2025 (D-TDC13-002)" do
+    Formats.zone_codes("2033-C", 202301).should eq(Formats::ZONE_2033C)
+    Formats.zone_codes("2033-C", 202701).should eq(Formats::ZONE_2033C)
+    Formats::ZONE_2033C.size.should eq(103)
+    Formats::ZONE_2033C.should_not contain("RQ")
+    Formats::ZONE_2033C.should_not contain("KA")
+    Formats.form_name("2033-C", 202401).should eq("2033C")
+    Formats.form_name("2033-C", 202501).should eq("2033C2")
+    Formats.form_name("2033-C", 202701).should eq("2033C2")
+    Formats.form_name("2035-A", 202601).should eq("2035A")
+    Teledec::Config.annex_forms("is_rsi").should eq(%w[2033-C])
+    Teledec::Config.annex_forms("bic_rsi").should eq(%w[2033-C])
+    Teledec::Config.annex_forms("bnc").should be_empty
+  end
+
+  it "joint la 2033-C à la liasse simplifiée et écarte sans erreur les annexes du réel normal (D-TDC13-002)" do
+    S.books("is_rsi")
+    sale
+    S.connect
+    Partiduo::Api::Modules.activate(S::SYSTEM, CODE).value!
+    Api.unregister_annexes(CODE)
+    Api.register_annexes(CODE, %w[2054 2055 2033-C]) do |_, _|
+      SAMPLE.merge({"2033-C" => {"DE" => d("12000.40"), "GD" => d("2400"), "JD" => d("4800"), "DK" => d("12000.40")}})
+    end
+    # Le même fournisseur au réel normal : 2054 et 2055 seules.
+    Api.update_settings(S::SYSTEM, Api::SettingsInput.new("is_rn", "ca3_monthly", false)).value!
+    boxes_of(S.liasse).keys.sort!.should eq(%w[2054 2055])
+    Api.update_settings(S::SYSTEM, Api::SettingsInput.new("is_rsi", "ca3_monthly", false)).value!
+
+    filing = S.liasse
+    filing.forms.should eq(%w[2065 2033])
+    filing.ready?.should be_true
+    boxes_of(filing).should eq({"2033-C" => {"DE" => d("12000"), "GD" => d("2400"), "JD" => d("4800"), "DK" => d("12000")}})
+    filing.details["annexes"].should eq("TDCANNEX:2033-C")
+
+    Api.transmit(S.admin, filing.id).value!
+    body = S.teledec.requests.find! { |request| request.path == "/service/liasse" }.body
+    zones = S::LiasseBody.parse(body).zones.as_h
+    zones.keys.should eq(%w[2033C2])
+    zones["2033C2"]["DE"].as_i64.should eq(12000)
   end
 
   it "bloque la liasse sur une zone inconnue, un formulaire non déclaré ou un fournisseur en échec" do

@@ -156,6 +156,17 @@ module Teledec
         PT PU PV PW PX PY PZ QA QB QC QD QE QF QG QH QI QJ QK QL QM QN QO QP QR QS QT QU QV QW QX SP SR TA TB TC TD UJ
         UK UM UN UP UQ UR US UT UU AA AB AC AD AE AF AG AH AJ AK AL AM AN AP AQ AR AS AT AU AV AW AX
       ]
+      # Tableau 2033-C du régime simplifié (immobilisations, amortissements,
+      # plus et moins-values), fourni par une extension (D-TDC13-002) : zones
+      # numériques du schéma `2033C2-2025.json`, identiques à celles de la
+      # feuille « Champs » de `2033C.xls` (millésime 2023), hors répétition
+      # des cessions (`2033CImmo`, `repetition2033C2Immo`) et hors case
+      # booléenne « Déposé néant » (`RQ`).
+      ZONE_2033C = %w[
+        AA AB AC AD AE AF AG AH AJ AK BA BB BC BD BE BF BG BH BJ BK CA CB CC CD CE CF CG CH CJ CK DA DB DC DD DE DF DG DH
+        DJ DK EA EB EC ED EE EF EG EH EJ EK FA FB FC FD FE FF FG FH GA GB GC GD GE GF GG GH HA HB HC HD HE HF HG HH JA JB
+        JC JD JE JF JG JH AL AM AN AP LL ML NL PL QL QM QN QP SL SM SN TL TM TN UL UM UN
+      ]
       ZONE_CODES = {
         "2035-A" => {202401 => ZONE_2035A},
         "2035-B" => {
@@ -163,10 +174,26 @@ module Teledec
           202501 => ZONE_2035B + %w[AC DM],
           202601 => ZONE_2035B + %w[AC AD AE AF AG DP DQ DR DS],
         },
-        "2035" => {202401 => %w[AA AB FG FH FJ FV MG NG NH NN NP NQ NR AP AL AM AJ AN AF AR AG AH AS]},
-        "2054" => {202301 => ZONE_2054},
-        "2055" => {202301 => ZONE_2055},
+        "2035"   => {202401 => %w[AA AB FG FH FJ FV MG NG NH NN NP NQ NR AP AL AM AJ AN AF AR AG AH AS]},
+        "2054"   => {202301 => ZONE_2054},
+        "2055"   => {202301 => ZONE_2055},
+        "2033-C" => {202301 => ZONE_2033C},
       }
+
+      # Nom d'un formulaire dans `zones_formulaires`, par premier millésime
+      # d'application, quand il n'est pas son code sans tiret : la 2033-C
+      # s'appelle `2033C` jusqu'au millésime 2024 (`2033C.xls` de 2023) et
+      # `2033C2` depuis 2025 (schéma `2033C2-2025.json`), mêmes zones
+      # (D-TDC13-002).
+      FORM_NAMES = {
+        "2033-C" => {202301 => "2033C", 202501 => "2033C2"},
+      }
+
+      # Nom transmis du formulaire `form` au millésime `target` (rang).
+      def self.form_name(form : String, target : Int32) : String
+        names = FORM_NAMES[form]? || return form.delete('-')
+        names[names.keys.select(&.<=(target)).max? || names.keys.min]
+      end
 
       # Formulaires dont les zones portent le suffixe du formulaire dans le
       # schéma de TELEDEC (`HA_2065`, `FJ_2035` : les schémas de la 2035
@@ -372,12 +399,13 @@ module Teledec
       # sans le dire.
       def self.liasse_zones(payload : Payload) : Hash(String, Hash(String, Int64))?
         boxes = payload.boxes || return
-        unknown = unknown_zones(boxes, millesime_target(payload))
+        target = millesime_target(payload)
+        unknown = unknown_zones(boxes, target)
         unless unknown.empty?
           raise TransportError.new("teledec.errors.transport.zone_unknown", {"zones" => unknown.join(", ")})
         end
         zones = boxes.to_h do |form, values|
-          name = form.delete('-')
+          name = form_name(form, target)
           suffixed = SUFFIXED_ZONE_FORMS.includes?(name)
           {name, values.to_h { |box, amount| {suffixed ? "#{box}_#{name}" : box, integer(amount)} }}
         end

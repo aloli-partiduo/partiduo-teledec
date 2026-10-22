@@ -32,16 +32,18 @@ module Teledec
 
     # Annexes de la liasse qu'une extension peut fournir (A-AMO-2,
     # `Annexes`), par régime : la 2054 (immobilisations) et la 2055
-    # (amortissements) du régime réel normal (2050 et suivantes). Les
-    # tableaux du régime simplifié (2033-C) ne sont pas ouverts : point à
-    # soumettre (D-TDC13-001).
+    # (amortissements) du régime réel normal (2050 et suivantes) ; la
+    # 2033-C (immobilisations, amortissements, plus et moins-values) du
+    # régime simplifié (D-TDC13-002).
     ANNEX_FORMS = {
-      "is_rn"  => %w[2054 2055],
-      "bic_rn" => %w[2054 2055],
+      "is_rn"   => %w[2054 2055],
+      "bic_rn"  => %w[2054 2055],
+      "is_rsi"  => %w[2033-C],
+      "bic_rsi" => %w[2033-C],
     }
 
-    # Annexes fournies pour le régime `tax_system` (aucune hors du réel
-    # normal) ; sans régime : toutes celles qu'une extension peut fournir.
+    # Annexes fournies pour le régime `tax_system` (aucune en BNC ni pour
+    # une SCI) ; sans régime : toutes celles qu'une extension peut fournir.
     def self.annex_forms(tax_system : String? = nil) : Array(String)
       return ANNEX_FORMS.values.flatten.uniq! if tax_system.nil?
       ANNEX_FORMS[tax_system]? || [] of String

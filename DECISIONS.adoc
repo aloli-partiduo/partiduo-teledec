@@ -90,8 +90,51 @@ les immobilisations aux plus et moins-values en lignes répétées : à
 décider par l'utilisateur. Les ouvrir se ferait en ajoutant
 `2033-C` à `Config::ANNEX_FORMS` (`is_rsi`, `bic_rsi`) et ses zones à
 `ZONE_CODES`.
+_Ouvert le 22 octobre 2026 : D-TDC13-002._
 
 *Compatibilité.* Aucune donnée : sans fournisseur enregistré, la liasse
 est inchangée. Une liasse du réel normal déjà préparée signale
 `teledec.controls.changed` à son prochain contrôle si un fournisseur actif
 y joint désormais des annexes.
+
+=== D-TDC13-002 — Tableau 2033-C du régime simplifié ouvert aux annexes (22 octobre 2026)
+
+*Contexte.* D-TDC13-001 laissait à décider l'ouverture de la 2033-C
+(immobilisations, amortissements, plus et moins-values) du régime
+simplifié. Décision de l'utilisateur : l'ouvrir par la même accroche que
+la 2054 et la 2055, `partiduo-amortis` la remplissant pour une liasse
+`is_rsi` ou `bic_rsi` (ISRS, BICRS chez TELEDEC). Aucun échange avec
+TELEDEC : zones relevées dans `partiduo-docs/travail/teledec/`.
+
+*Choix.*
+
+* `Config::ANNEX_FORMS` : `is_rsi` et `bic_rsi` → `2033-C`.
+* *Zones.* `Remote::Formats::ZONE_2033C` (103 zones chiffrées) : celles du
+  schéma `2033C2-2025.json`, identiques à la feuille « Champs » de
+  `2033C.xls` (millésime 2023) ; rangées au rang 202301, valables ensuite.
+  Ni la répétition des cessions (`2033CImmo`, `repetition2033C2Immo` :
+  nature, valeur d'actif, amortissements, prix, plus ou moins-value de
+  chaque élément cédé), qui n'est pas une zone simple, ni la case
+  booléenne « Déposé néant » (`RQ`).
+* *Nom transmis.* Le formulaire s'appelle `2033C` jusqu'au millésime 2024
+  et `2033C2` depuis 2025 (schéma `2033C2-2025.json`), mêmes zones :
+  `Formats.form_name` (table `FORM_NAMES` par millésime) ; les autres
+  formulaires gardent leur code sans tiret. Côté Partiduo, le formulaire
+  reste `2033-C` (cases du document, contrôles, empreinte).
+* *Régime de la liasse.* Le fournisseur ne connaît pas le régime : il rend
+  tout ce qu'il sait remplir. Un formulaire qu'il a déclaré mais que le
+  régime n'a pas (2054 pour une liasse simplifiée, 2033-C pour une liasse
+  du réel normal) est écarté *sans erreur* ; un formulaire non déclaré
+  reste bloquant (`annex_form`).
+
+*Limite.* Le cadre des plus et moins-values n'est rempli par aucun
+fournisseur (répétition non transmise) ; ses totaux non plus.
+
+*Vérification.* `spec/teledec/annexes_spec.cr` : zones, nom par millésime,
+régimes, liasse simplifiée qui joint la 2033-C seule et la transmet sous
+`2033C2`, même fournisseur au réel normal (2054, 2055 seules).
+
+*Compatibilité.* Sans fournisseur de la 2033-C, la liasse simplifiée est
+inchangée. Une liasse simplifiée déjà préparée signale
+`teledec.controls.changed` à son prochain contrôle si un fournisseur actif
+y joint désormais la 2033-C.
