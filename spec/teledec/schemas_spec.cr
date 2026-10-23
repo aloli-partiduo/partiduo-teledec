@@ -100,7 +100,7 @@ describe "Validation des documents par les schémas de TELEDEC avant l'envoi (D-
     end
   end
 
-  it "refuse un document hors schéma avec une erreur traduite qui cite le chemin, sans rien envoyer" do
+  it "refuse un document hors schéma avec une erreur traduite dans chaque langue livrée qui cite le chemin, sans rien envoyer" do
     S.books
     S.connect
     dir = SchemaSpec.fixtures
@@ -113,8 +113,10 @@ describe "Validation des documents par les schémas de TELEDEC avant l'envoi (D-
     params["path"].should eq("$.2572.GE")
     params["problem"].should eq("type string attendu (reçu : integer)")
     params["more"].should eq("")
-    I18n.with_locale("en") { I18n.t("teledec.errors.transport.schema", params) }.should contain("$.2572.GE")
-    I18n.with_locale("nl") { I18n.t("teledec.errors.transport.schema", params) }.should contain("$.2572.GE")
+    Partiduo::LOCALES.each do |locale|
+      message = I18n.with_locale(locale) { I18n.t("teledec.errors.transport.schema", params) }
+      {locale, message.includes?("$.2572.GE") && !message.includes?("missing")}.should eq({locale, true})
+    end
     S.teledec.requests.map(&.path).should_not contain("/service/declaration-marque-blanche")
     S.teledec.requests.map(&.path).should_not contain("/service/creation-entreprise")
   ensure

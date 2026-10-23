@@ -93,7 +93,7 @@ describe "Dépôt au greffe par TELEDEC (réponses du 1er octobre 2026)" do
       end
     end
 
-    it "refuse de préparer le greffe d'une SCI, d'une EI, d'une association ou d'une forme non renseignée (message traduit)" do
+    it "refuse de préparer le greffe d'une SCI, d'une EI, d'une association ou d'une forme non renseignée (message traduit dans chaque langue livrée)" do
       S.books(greffe: true)
       {"SCI" => "teledec.errors.greffe.legal_form", "EI" => "teledec.errors.greffe.legal_form",
        "Association" => "teledec.errors.greffe.legal_form", "" => "teledec.errors.greffe.legal_form_missing"}.each do |form, key|
@@ -103,7 +103,10 @@ describe "Dépôt au greffe par TELEDEC (réponses du 1er octobre 2026)" do
         Api.schedule(S.admin, S.fiscal_year_id).map(&.kind).should_not contain("greffe")
       end
       I18n.with_locale("fr") { I18n.t("teledec.errors.greffe.legal_form", {"form" => "SCI"}).should contain("« SCI »") }
-      I18n.with_locale("nl") { I18n.t("teledec.errors.greffe.legal_form", {"form" => "SCI"}).should contain("SCI") }
+      Partiduo::LOCALES.each do |locale|
+        message = I18n.with_locale(locale) { I18n.t("teledec.errors.greffe.legal_form", {"form" => "SCI"}) }
+        {locale, message.includes?("SCI") && !message.includes?("missing")}.should eq({locale, true})
+      end
       S.legal_form("SAS")
       Books.sale(Books.card("CUSTOMER", "Atelier Morel").code, "1000")
       Api.schedule(S.admin, S.fiscal_year_id).map(&.kind).should contain("greffe")

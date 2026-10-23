@@ -4,7 +4,7 @@ require "../spec_helper"
 
 # Traductions des écrans de l'extension (ADR-005 D7) : chaque route de
 # `/ext/TELEDEC/` servie en `GET` (liste tirée du routeur de Marten),
-# obtenue en fr, en et nl par un administrateur, sur un dossier relié au
+# obtenue dans chaque langue livrée par un administrateur, sur un dossier relié au
 # TELEDEC simulé : liasse transmise puis accusée (accusé de réception),
 # dépôt au greffe transmis et finalisé (PDF signé), DAS2 préparée. Contrôle
 # de l'interface (`PartiduoUi::Translations`) : ni marqueur de traduction
@@ -15,7 +15,7 @@ private alias S = Teledec::SpecSupport
 private alias Api = Teledec::Api
 private alias Books = PartiduoUi::Books
 
-describe "Traductions des écrans TELEDEC (fr, en, nl)" do
+describe "Traductions des écrans TELEDEC (langues livrées)" do
   it "rend chaque écran dans chaque langue, sans clé absente, brute ni interpolation non résolue" do
     S.books(greffe: true)
     Books.sale(Books.card("CUSTOMER", "Atelier Morel").code, "1000")

@@ -326,7 +326,7 @@ describe "Formats de l'API partenaire de TELEDEC (unitaires)" do
       payload = Payload.new("das2", %w[DAS2], identity, "2025-01-01", "2025-12-31", das2: lines)
       error = expect_raises(Teledec::TransportError) { white_label(payload) }
       error.key.should eq("teledec.errors.transport.das2_tax_system")
-      %w[fr en nl].each do |locale|
+      Partiduo::LOCALES.each do |locale|
         I18n.with_locale(locale) do
           I18n.t("teledec.errors.transport.das2_tax_system").should_not contain("missing")
           I18n.t("teledec.controls.das2_tax_system").should_not contain("missing")

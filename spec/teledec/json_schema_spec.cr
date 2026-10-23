@@ -106,7 +106,7 @@ describe "Validation par schéma JSON (sous-ensemble des schémas de TELEDEC, D-
       .should eq(["$ref", "anyOf"])
   end
 
-  it "traduit chaque code d'écart en fr, en et nl" do
+  it "traduit chaque code d'écart dans chaque langue livrée (Partiduo::LOCALES)" do
     %w[type required unknown format minimum maximum min_length max_length enum pattern min_items max_items more].each do |code|
       Partiduo::LOCALES.each do |locale|
         I18n.with_locale(locale) { I18n.t("teledec.schema.#{code}").should_not contain("missing") }
