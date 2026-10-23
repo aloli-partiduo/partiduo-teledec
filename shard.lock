@@ -62,7 +62,7 @@ shards:
 
   partiduo:
     git: https://github.com/aloli-partiduo/partiduo-app.git
-    version: 0.1.37+git.commit.10d5914e2988cb8eb07f71f608fb72e6ec2952d1
+    version: 0.1.46+git.commit.9863bf96d6f7eca2d2f28664a85565db856300a6
 
   partiduo-ui-bulma:
     git: https://github.com/aloli-partiduo/partiduo-ui-bulma.git
