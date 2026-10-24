@@ -17,12 +17,18 @@
 # * Menus : « Télédéclarations » sous « TVA » (rubrique des déclarations) et
 #   paramètres sous « Paramètres ».
 # * Aucun abonnement : les déclarations sont préparées à la demande.
+# * Exclusions (D-TDC14-001, D-AMD-042 du cœur) : jamais dans le dossier
+#   d'un foyer (`incompatible_with_kind "household"`), même sans PERSO ;
+#   seulement au régime fiscal `fr` (`regimes "fr"`) : TELEDEC dépose
+#   auprès de l'administration fiscale française.
 Partiduo::Modules.register do
   code "TELEDEC"
   name "teledec.module.name"
   version Teledec::VERSION
   requires_core "~> 0.1"
   depends_on_any "ACCOUNTING", "LIBERAL"
+  incompatible_with_kind "household"
+  regimes "fr"
 
   permission "teledec.return.read"
   permission "teledec.return.prepare"

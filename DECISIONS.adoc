@@ -138,3 +138,20 @@ régimes, liasse simplifiée qui joint la 2033-C seule et la transmet sous
 inchangée. Une liasse simplifiée déjà préparée signale
 `teledec.controls.changed` à son prochain contrôle si un fournisseur actif
 y joint désormais la 2033-C.
+
+=== D-TDC14-001 — Ni foyer ni dossier belge (24 octobre 2026)
+
+*Choix.* Deux déclarations au manifeste (exclusions adoptées par
+l'utilisateur le 24 octobre 2026, D-AMD-042 du cœur) :
+
+* `incompatible_with_kind "household"` : les télédéclarations sont des
+  obligations d'entreprise ; un foyer avec la Comptabilité pouvait activer
+  l'extension (`depends_on_any "ACCOUNTING", "LIBERAL"`), seul `PERSO`
+  l'en écartait ;
+* `regimes "fr"` (D-AMD-039 du cœur) : TELEDEC dépose auprès de
+  l'administration fiscale française ; un dossier au régime `be` la refuse.
+
+Le cœur contrôle les deux à l'activation, au provisionnement et au
+démarrage. Les specs provisionnent un dossier d'entreprise français :
+inchangées.
+

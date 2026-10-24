@@ -27,6 +27,10 @@ describe "TELEDEC pour un libéral sans Comptabilité (D-TDC2)" do
     manifest = Partiduo::Modules["TELEDEC"]? || raise "manifeste absent"
     manifest.depends_on.should be_empty
     manifest.depends_on_any.should eq([%w[ACCOUNTING LIBERAL]])
+    # Ni foyer ni dossier belge (D-TDC14-001).
+    manifest.incompatible_with_kind.should eq(["household"])
+    manifest.regimes.should eq(["fr"])
+    manifest.admits_regime?("be").should be_false
   end
 
   it "s'active avec le module liberal seul, et le retient tant qu'il est la seule source" do
