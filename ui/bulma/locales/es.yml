@@ -118,7 +118,7 @@ es:
       checked_at: "Credenciales verificadas el"
       login: "Identificador del cliente de la API (client_id)"
       api_key: "Secreto del cliente de la API (client_secret)"
-      key_stored: "Guardado — deje vacío para conservarlo"
+      key_stored: "Guardado — déjelo vacío para conservarlo"
       env: "Entorno"
       clear: "Borrar las credenciales"
       email: "Correo electrónico de contacto de la empresa"

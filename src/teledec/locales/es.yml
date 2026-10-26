@@ -32,7 +32,7 @@ es:
       is_rn: "IS (impuesto sobre sociedades), régimen normal (2065 y 2050)"
       bic_rsi: "BIC en el IR (impuesto sobre la renta), régimen simplificado (2031 y 2033)"
       bic_rn: "BIC en el IR (impuesto sobre la renta), régimen normal (2031 y 2050)"
-      bnc: "BNC, déclaration contrôlée (2035)"
+      bnc: "BNC, régimen de declaración controlada (2035)"
       sci: "SCI en el IR (2072)"
     vat_systems:
       ca3_monthly: "CA3 mensual"

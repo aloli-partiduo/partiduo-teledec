@@ -11,14 +11,14 @@ pt:
     answer_no: "Não"
     transport:
       available: "Transmissão direta através de %{name}."
-      unavailable: "Transmissão direta à TELEDEC desativada nesta instância: prepare e controle aqui as declarações, importe o balancete no sítio da TELEDEC e depois registe a entrega e o respetivo comprovativo."
+      unavailable: "Transmissão direta à TELEDEC desativada nesta instância: prepare e verifique aqui as declarações, importe o balancete no sítio da TELEDEC e depois registe a entrega e o respetivo comprovativo."
     actions:
       open_remote: "Abrir na TELEDEC"
       open_greffe: "Finalizar o depósito na TELEDEC"
       show: "Mostrar"
       prepare: "Preparar"
       prepare_again: "Preparar de novo"
-      check: "Controlar"
+      check: "Verificar"
       transmit: "Transmitir à TELEDEC"
       refresh: "Atualizar o estado"
       refresh_all: "Atualizar os estados"
@@ -135,7 +135,7 @@ pt:
       callback_password_unset: "Não configurada (PARTIDUO_TELEDEC_CALLBACK_PASSWORD)"
     flash:
       prepared: "Declaração preparada."
-      checked: "Declaração controlada."
+      checked: "Declaração verificada."
       transmitted: "Declaração transmitida à TELEDEC."
       refreshed: "Estado atualizado."
       refreshed_all:

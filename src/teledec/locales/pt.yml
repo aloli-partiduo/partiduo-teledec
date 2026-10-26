@@ -5,7 +5,7 @@ pt:
     permissions:
       return:
         read: "Ver as submissões eletrónicas, os seus prazos e os seus comprovativos"
-        prepare: "Preparar e controlar as submissões eletrónicas"
+        prepare: "Preparar e verificar as submissões eletrónicas"
         transmit: "Transmitir as declarações à TELEDEC"
       settings:
         manage: "Configurar a TELEDEC (regime, opções, credenciais da API)"
